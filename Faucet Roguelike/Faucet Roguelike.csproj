@@ -287,6 +287,28 @@
     <Compile Include="Assets\Alex Parenti\Scripts\DungeonTiles.cs" />
     <Compile Include="Assets\Alex Parenti\Scripts\Room.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\doc\docs.txt" />
+    <None Include="Assets\inc\headers.txt" />
+    <None Include="Assets\src\Alex\temp.txt" />
+    <None Include="Assets\src\Devin\temp.txt" />
+    <None Include="Assets\src\Drew\temp.txt" />
+    <None Include="Assets\src\Garrett\temp.txt" />
+    <None Include="Assets\src\Luke\temp.txt" />
+    <None Include="Assets\src\Miranda\temp.txt" />
+    <None Include="Assets\src\Travis\temp.txt" />
+    <None Include="Assets\src\Zach\temp.txt" />
+    <None Include="Assets\src\Zane\temp.txt" />
+    <None Include="Assets\tst\Alex\temp.txt" />
+    <None Include="Assets\tst\Devin\temp.txt" />
+    <None Include="Assets\tst\Drew\temp.txt" />
+    <None Include="Assets\tst\Garrett\temp.txt" />
+    <None Include="Assets\tst\Luke\temp.txt" />
+    <None Include="Assets\tst\Miranda\temp.txt" />
+    <None Include="Assets\tst\Travis\temp.txt" />
+    <None Include="Assets\tst\Zach\temp.txt" />
+    <None Include="Assets\tst\Zane\temp.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>

@@ -16,28 +16,20 @@ public class DungeonTiles : MonoBehaviour {
         {
             case WallPos.top:
                 return midTopWall;
-                break;
             case WallPos.bot:
                 return midBotWall;
-                break;
             case WallPos.left:
                 return midLeftWall;
-                break;
             case WallPos.right:
                 return midRightWall;
-                break;
             case WallPos.topLeft:
                 return topLeftWall;
-                break;
             case WallPos.topRight:
                 return topRightWall;
-                break;
             case WallPos.botLeft:
                 return botLeftWall;
-                break;
             case WallPos.botRight:
                 return botRightWall;
-                break;
         }
         return floor;
     }
@@ -48,16 +40,12 @@ public class DungeonTiles : MonoBehaviour {
         {
             case DoorPos.top:
                 return topDoor;
-                break;
             case DoorPos.bot:
                 return botDoor;
-                break;
             case DoorPos.left:
                 return leftDoor;
-                break;
             case DoorPos.right:
                 return rightDoor;
-                break;
         }
         return floor;
     }
