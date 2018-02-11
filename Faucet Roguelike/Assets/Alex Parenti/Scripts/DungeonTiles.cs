@@ -74,28 +74,34 @@ public class DungeonTiles : MonoBehaviour {
         int width = r.GetWidthActual();
         int height = r.GetHeightActual();
         Vector2 botLeft = roomPos - new Vector2(width / 2f, height / 2f) + new Vector2(0.5f, 0.5f);
-
-        for (int w = 0; w < 15; w++)
+        if (width > 15 || height > 15)
         {
-            for (int h = 0; h < 15; h++)
+            print("width = " + width);
+            print("height = " + height);
+        }
+        for (int w = 0; w < width; w++)
+        {
+            for (int h = 0; h < height; h++)
             {
                 Vector2 tilePos = botLeft + new Vector2(w, h);
+                GameObject newTile = null;
+            
                 if (w == 0) // left side
                 {
                     if (h == 0)
                     {
                         // get botLeft sprite
-                        GameObject newWall = GameObject.Instantiate(GetWall(WallPos.botLeft));
-                        newWall.transform.position = tilePos;
-                        print("tiled bottom left");
+                        newTile = GameObject.Instantiate(GetWall(WallPos.botLeft));
                     }
                     else if (h == height - 1)
                     {
                         // get topLeft sprite
+                        newTile = GameObject.Instantiate(GetWall(WallPos.topLeft));
                     }
                     else
                     {
                         // get mid left sprite
+                        newTile = GameObject.Instantiate(GetWall(WallPos.left));
                     }
                 }
                 else if (w == width - 1)
@@ -103,29 +109,36 @@ public class DungeonTiles : MonoBehaviour {
                     if(h == 0)
                     {
                         // get botRight sprite
+                        newTile = GameObject.Instantiate(GetWall(WallPos.botRight));
                     }
                     else if (h == height - 1)
                     {
                         // get topRight sprite
+                        newTile = GameObject.Instantiate(GetWall(WallPos.topRight));
                     }
                     else
                     {
                         // get midRight sprite
+                        newTile = GameObject.Instantiate(GetWall(WallPos.right));
                     }
                 }
-                else if (height == 0)
+                else if (h == 0)
                 {
                     // get midBot sprite
+                    newTile = GameObject.Instantiate(GetWall(WallPos.bot));
                 }
-                else if (height == height - 1)
+                else if (h == height - 1)
                 {
                     // get midTop sprite
+                    newTile = GameObject.Instantiate(GetWall(WallPos.top));
                 }
                 else
                 {
                     // get floor
+                    newTile = GameObject.Instantiate(GetFloor());
                 }
-
+                if(newTile != null)
+                    newTile.transform.position = tilePos;
 
             }
 

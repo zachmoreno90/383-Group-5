@@ -27,6 +27,7 @@ public class Room : MonoBehaviour
         //        newRoom.transform.localScale = new Vector3(roomWidth, roomHeight, 1);
         //        newRoom.transform.position = new Vector3(roomPos.x + roomWidth / 2f, roomPos.y + roomHeight / 2f, 0);
         newRoom.transform.position = roomPos;
+        newRoom.transform.position += new Vector3(0, 0, 2);
     }
 
     public Vector2 GetUnitPos()
@@ -43,6 +44,19 @@ public class Room : MonoBehaviour
         return roomHeight / unitScale;
     }*/
    
+    public void MergeWithRoom(Room r)
+    {
+        Vector2 rPos = r.GetPosActual();
+
+        float minX = Mathf.Min(roomPos.x - width / 2f, rPos.x - r.width / 2f);
+        float maxX = Mathf.Max(roomPos.x + width / 2f, rPos.x + r.width / 2f);
+        float minY = Mathf.Min(roomPos.y - height / 2f, rPos.y - r.height / 2f);
+        float maxY = Mathf.Max(roomPos.y + height / 2f, rPos.y + r.height / 2f);
+
+        roomPos = new Vector2((minX + maxX) / 2, (minY + maxY) / 2);
+        width = (int)(maxX - minX);
+        height = (int)(maxY - minY);
+    }
 
     public Vector2 GetPosActual()
     { return roomPos;}
