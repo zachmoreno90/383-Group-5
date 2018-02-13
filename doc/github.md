@@ -20,6 +20,7 @@ Before you make any changes, always click "Fetch Origin", and if the button chan
 4. If there are any files you do not want to upload the changes from, right click and click ignore
 5. Add a (very) short summary and an optional description.
 6. Click "Commit to Master"
+7. Click "Push to Origin"
 
 ## Reverting Edits
 
