@@ -282,14 +282,41 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Alex Parenti\Scripts\Door.cs" />
-    <Compile Include="Assets\Alex Parenti\Scripts\DungeonGenerator.cs" />
-    <Compile Include="Assets\Alex Parenti\Scripts\DungeonTiles.cs" />
-    <Compile Include="Assets\Alex Parenti\Scripts\Room.cs" />
+    <Compile Include="Assets\src\Alex\Door.cs" />
+    <Compile Include="Assets\src\Alex\DungeonGenerator.cs" />
+    <Compile Include="Assets\src\Alex\DungeonTiles.cs" />
+    <Compile Include="Assets\src\Alex\Room.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\doc\docs.txt" />
     <None Include="Assets\inc\headers.txt" />
+    <None Include="Assets\prefabs\Alex\temp.txt" />
+    <None Include="Assets\prefabs\Devin\temp.txt" />
+    <None Include="Assets\prefabs\Drew\temp.txt" />
+    <None Include="Assets\prefabs\Garrett\temp.txt" />
+    <None Include="Assets\prefabs\Luke\temp.txt" />
+    <None Include="Assets\prefabs\Miranda\temp.txt" />
+    <None Include="Assets\prefabs\Travis\temp.txt" />
+    <None Include="Assets\prefabs\Zach\temp.txt" />
+    <None Include="Assets\prefabs\Zane\temp.txt" />
+    <None Include="Assets\scenes\Alex\temp.txt" />
+    <None Include="Assets\scenes\Devin\temp.txt" />
+    <None Include="Assets\scenes\Drew\temp.txt" />
+    <None Include="Assets\scenes\Garrett\temp.txt" />
+    <None Include="Assets\scenes\Luke\temp.txt" />
+    <None Include="Assets\scenes\Miranda\temp.txt" />
+    <None Include="Assets\scenes\Travis\temp.txt" />
+    <None Include="Assets\scenes\Zach\temp.txt" />
+    <None Include="Assets\scenes\Zane\temp.txt" />
+    <None Include="Assets\sprites_materials\Alex\temp.txt" />
+    <None Include="Assets\sprites_materials\Devin\temp.txt" />
+    <None Include="Assets\sprites_materials\Drew\temp.txt" />
+    <None Include="Assets\sprites_materials\Garrett\temp.txt" />
+    <None Include="Assets\sprites_materials\Luke\temp.txt" />
+    <None Include="Assets\sprites_materials\Miranda\temp.txt" />
+    <None Include="Assets\sprites_materials\Travis\temp.txt" />
+    <None Include="Assets\sprites_materials\Zach\temp.txt" />
+    <None Include="Assets\sprites_materials\Zane\temp.txt" />
     <None Include="Assets\src\Alex\temp.txt" />
     <None Include="Assets\src\Devin\temp.txt" />
     <None Include="Assets\src\Drew\temp.txt" />
