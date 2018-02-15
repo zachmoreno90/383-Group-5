@@ -1,6 +1,8 @@
 Hunt for the Dodo Egg 2
 ======
  
+ ## Team Faucet members
+ Alex Parenti, Devin Driggs, Drew Canham, Garrett Oetken, Luke Hill, Miranda Ronald, Travis Rousey, Zach Moreno, Zane Goodrick
 
 ## Directory Structure
 * [/doc](https://github.com/DDriggs00/383-Group-5/tree/master/doc) - Contains all documentation
