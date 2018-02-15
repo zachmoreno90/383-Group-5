@@ -282,14 +282,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\src\_Public\RunSeed.cs" />
     <Compile Include="Assets\src\Alex\Door.cs" />
     <Compile Include="Assets\src\Alex\DungeonGenerator.cs" />
     <Compile Include="Assets\src\Alex\DungeonTiles.cs" />
     <Compile Include="Assets\src\Alex\Room.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\doc\docs.txt" />
-    <None Include="Assets\inc\headers.txt" />
     <None Include="Assets\prefabs\Alex\temp.txt" />
     <None Include="Assets\prefabs\Devin\temp.txt" />
     <None Include="Assets\prefabs\Drew\temp.txt" />

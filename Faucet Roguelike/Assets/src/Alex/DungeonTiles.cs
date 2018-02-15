@@ -62,11 +62,7 @@ public class DungeonTiles : MonoBehaviour {
         int width = r.GetWidthActual();
         int height = r.GetHeightActual();
         Vector2 botLeft = roomPos - new Vector2(width / 2f, height / 2f) + new Vector2(0.5f, 0.5f);
-        if (width > 15 || height > 15)
-        {
-            print("width = " + width);
-            print("height = " + height);
-        }
+
         for (int w = 0; w < width; w++)
         {
             for (int h = 0; h < height; h++)

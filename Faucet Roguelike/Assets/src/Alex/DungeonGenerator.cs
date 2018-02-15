@@ -29,14 +29,16 @@ public class DungeonGenerator : MonoBehaviour {
 
     List<Room> DungeonRooms = new List<Room>();
     List<Door> ExpandingDoors = new List<Door>();
-    Dictionary<Vector2, Room> roomPositions = new Dictionary<Vector2, Room>();
+    List<Vector2> mMainPathTraveledDirs = new List<Vector2>();
+
     DungeonTiles tileGenerator;
 
     Room mStartRoom;
     int mMainPathMin = 8, mMainPathMax = 12;                                        // eventually needs to be modified by difficulty/level
-    int minMainPathPortion = 3;
+    float minMainPathPortion = 0.25f;
     private void Awake()
     {
+        SetupMainPathDirs();
         GenerateDungeon();
         tileGenerator = GetComponent<DungeonTiles>();
         foreach (Room r in DungeonRooms)
@@ -46,91 +48,118 @@ public class DungeonGenerator : MonoBehaviour {
         }
     }
 
+    void SetupMainPathDirs()
+    {   // set up mMainPathTraveledDirs to include all cardinal directions
+        // these directions are removed when used along the main path
+        // when only one is left, main path can't travel that direction
+        mMainPathTraveledDirs.Add(mNorth);
+        mMainPathTraveledDirs.Add(mSouth);
+        mMainPathTraveledDirs.Add(mWest);
+        mMainPathTraveledDirs.Add(mEast);
+    }
+
     void GenerateDungeon()
     {
         int countToMid, countToEnd;
         int dungeonSpan = Random.Range(mMainPathMin, mMainPathMax);
-        countToMid = Random.Range(minMainPathPortion, dungeonSpan - minMainPathPortion);
+        int minDist = Mathf.CeilToInt(minMainPathPortion * dungeonSpan);
+
+        countToMid = Random.Range(minDist, dungeonSpan - minDist);
         countToEnd = dungeonSpan - countToMid;
         bool goingRight = (Random.value > 0.5);               // choose left or right as the primary direction for the start to mid direction
         //create starting room, add it to dungeon rooms list
         mStartRoom = CreateRoom(Vector2.zero);
+
+        // TESTING BUILD BIG ROOM ABOVE
         // add doors to start room, then call expand making sure rooms only expand 'away' from start room
-        ExpandMainPathDoors(mStartRoom, goingRight);
+        ExpandMainPathDoors(mStartRoom);
         for (int i = 0; i < countToMid; i++)
         {                                                      // until a distance to middle room has been reached
             Room newRoom = ExpandRoom();
          
-            ExpandMainPathDoors(newRoom, goingRight);
+            if(i != countToMid - 1)
+            ExpandMainPathDoors(newRoom);
         }
+
+        BuildBigRoom();
+
         // then build the middle room, which should be a minimum of four room units combined.
-        BuildBigRoom(3, 2, goingRight, false);      
-        // then continue expanding from middle room, making sure rooms only expand 'away' from middle
-        goingRight = (Random.value > 0.5);
-        for(int i = 0; i < countToEnd; i++)                     // once a distance to end room is reached, build end room
-        {
-            Room newRoom = ExpandRoom();
+       // call build big room, passing height/depth, and that this is not the end room
+       // the DungeonRooms list can be used to get the last room added to know where the big room is coming from
 
-            ExpandMainPathDoors(newRoom, goingRight);
-        }
+        // continue expanding from middle room, choosing a side other side main path entered middle room, and other than
+        // direction denied to main path if a single direction still exists in mMainPathTraveledDirs
+        // once distance to end room is reached, built end room
+        // call build big room, passing height/depth, and that this is the end room
 
-        BuildBigRoom(2, 2, goingRight, true);                   // building end room
-        // then continue expanding from doors that have not yet been visited, adding branches
-        // until a number of iterations has been met.
-        for(int i = 0; i < 50; i++)
-        {
-            if (ExpandingDoors.Count > 0)   // should be able to remove this after expandDoors does something
-            {
-                // potentially have a separate expandPath function that will first check if new room will be
-                // adjacent to 3+ other rooms, if so, don't expand it?
-  //              Room newRoom = ExpandRoom();
-    //            ExpandDoors(newRoom);
-            }
-        }
+        // randomly shuffle the doors remaining in the expandingDoors list
+        // then starting at the first door in the list, start expanding branches from those doors.
 
         // might need to refine dungeon, removing some percentage of superfluous rooms.
+        
     }
-
-    
-    void BuildBigRoom(int width, int height, bool goingRight, bool isEndRoom)
+    void BuildBigRoom()
     {
-        Room[,] rList = new Room[width, height];
-        List<Room> roomsToMerge = new List<Room>();
-        // get last door on expanding door list
-        // pathToEndRoom = randomly choose an int between 0 and width. this will be the  room the path to end starts at
-        int pathToEnd = Random.Range(0, width-1);   // randomly chosen index for the room that will begin the path to end room
+        List<Room> mergingRooms = new List<Room>();
+        Vector2[] dirs = GetRandomDirections();
+        int chosenDir = 0;
+        Room lastRoom = DungeonRooms[DungeonRooms.Count - 1];
 
-        for(int w = 0; w < width; w++)
+        Vector2 perp = new Vector2(dirs[0].y, -dirs[0].x);
+        bool bigRoomCreated = true;
+
+        do
         {
-
-            for(int h = 0; h < height; h++)
+            bigRoomCreated = true;
+            for (int i = 0; i < 4; i++)
             {
-                // expand room
-                rList[w, h] = ExpandRoom();
-                roomsToMerge.Add(rList[w, h]);
-                // if h == 0, add door (goingRight) ? right : left
-                if (h == 0)
-                    AddDoorToFront(rList[w, h], (goingRight) ? mEast : mWest);
-                // if(h < height - 1, add door going up
-                if (h < height - 1)
-                    AddDoorToFront(rList[w, h], mNorth);
+                Vector2 dir = dirs[chosenDir];
+                if (i == 2)
+                    dir = perp;
+                else if (i == 3)
+                    dir *= -1;
+                AddDoorToFront(lastRoom, dir);
+                lastRoom = ExpandRoom();
+                if (lastRoom == null)
+                    bigRoomCreated = false;
+                else
+                    mergingRooms.Add(lastRoom);
+
+                if (!bigRoomCreated)
+                {
+                    Application.LoadLevel(Application.loadedLevelName);
+                    foreach (Room r in mergingRooms)
+                    {
+                        DungeonRooms.Remove(r);
+                    }
+                    mergingRooms.Clear();
+                    chosenDir++;
+                    lastRoom = DungeonRooms[DungeonRooms.Count - 1];
+                }
             }
-        }
+        } while (!bigRoomCreated && chosenDir < 4);
+        MergeRooms(mergingRooms);
 
-        if (!isEndRoom)
-        {
-            // get exit room to be more random
-            AddDoorToFront(rList[pathToEnd, height - 1], mNorth);   // adding main path exit to front of expanding door list
-            // go through rList and add doors to end of expanding door list on exterior
-
-            // add a big room from expanding room of size height/width
-            // add doors on the exterior of the big room to end of expandingDoors list
-            // adding one to the front of the list
-        }
-        // NEED TO DO : merge rooms
-        MergeRooms(roomsToMerge);                       // take all rooms generated by the above procedure and make them a single room
+        // get random exit door position/direction for continuing main path, add to front of door list
 
     }
+
+   
+    Room CreateRoom (Room curRoom, Door door)
+    {
+        // curRoom give it a door at position based on door
+        Room newRoom = CreateRoom(door.GetNewPos());
+        // give newRoom a door at position inverse of door
+        return newRoom;
+    }
+
+    Room CreateRoom(Room curRoom, Vector2 dir)
+    {
+        Vector2 newPos = curRoom.GetUnitPos() + dir;
+        Room newRoom = CreateRoom(newPos);
+        return newRoom;
+    }
+
     Room CreateRoom(Vector2 rPos)
     {
         if (isSpaceAvailable(rPos))
@@ -146,6 +175,7 @@ public class DungeonGenerator : MonoBehaviour {
             return null;
     }
 
+
     void MergeRooms(List<Room> R)
     {   // merge all rooms in the passed array by giving them all the same roomID. this room ID will be used when adding sprites
         foreach (Room r in R)
@@ -158,8 +188,29 @@ public class DungeonGenerator : MonoBehaviour {
         }
     }
 
-    void ExpandMainPathDoors(Room r, bool goingRight)
+
+    void ExpandMainPathDoors(Room r)
     {
+        Vector2[] dirs = GetRandomDirections();
+        for (int i = 0; i < 4; i++)
+        {
+            if(isSpaceAvailable(r, dirs[i]) && (mMainPathTraveledDirs.Count > 1 || !mMainPathTraveledDirs.Contains(dirs[i])))
+            {
+                AddDoorToFront(r, dirs[i]);
+                if (mMainPathTraveledDirs.Count > 1)
+                    mMainPathTraveledDirs.Remove(dirs[i]);
+
+                for(i++; i < 4; i++)
+                {   // add remaining doors to end
+                    AddDoorToEnd(r, dirs[i]);
+                }
+                return;
+            }
+
+        }
+        print("FAILED TO ADD MAIN PATH DOOR");
+        /*
+        // what I used to do
         if(Random.value > 0.5)
         {
             AddDoorToFront(r, (goingRight) ? mEast : mWest);
@@ -172,16 +223,9 @@ public class DungeonGenerator : MonoBehaviour {
         }
         AddDoorToEnd(r, (goingRight) ? mWest : mEast);
         AddDoorToEnd(r, mSouth);
+        */
     }
 
-    void RandomAddDoorsToEnd(Room r, Vector2[] dirs)
-    {
-        // still need to randomize order of dirs
-        for(int i = 0; i < dirs.Length; i++)
-        {
-            AddDoorToEnd(r, dirs[i]);
-        }
-    }
     void AddDoorToFront(Room r, Vector2 dir)
     {
         Door newDoor = CreateDoor(r, dir);
@@ -200,22 +244,6 @@ public class DungeonGenerator : MonoBehaviour {
         Door newDoor = newDoorObj.AddComponent<Door>() as Door;
         newDoor.Setup(r, dir);
         return newDoor;
-    }
-    void ExpandDoors(Room r, Room origin)
-    {
-        // origin room passes either the starting room, or the mid room
-        // this origin room position is used to make sure main path doesn't backtrack
-        // r is the room being expanded
-    
-    }
-
-    void ExpandDoors(Room r)
-    {
-        //expand doors from given room r
-        // create list of doors going N, S, E, and W from room r
-        // only add doors to list if room doesn't already exist at would be position of room expanding form said door
-        // then shuffle list, and add each door to the end of expanding doors list
-
     }
 
     Room ExpandRoom()
@@ -240,11 +268,11 @@ public class DungeonGenerator : MonoBehaviour {
 //        else return null
     }
 
-    void Refine()
-    {
-        // this may be unnecessary if I don't allow expanding rooms to generate if they would be adjacent to 3 other rooms.
-    }
 
+    bool isSpaceAvailable(Room r, Vector2 dir)
+    {
+        return isSpaceAvailable(r.GetUnitPos() + dir);
+    }
 
     bool isSpaceAvailable(Vector2 pos)
     {   
@@ -254,6 +282,16 @@ public class DungeonGenerator : MonoBehaviour {
                 return false;
         }
         return true;
+    }
+
+    Room GetRoomAtPos(Vector2 pos)
+    {
+        foreach (Room r in DungeonRooms)
+        {
+            if (r.ContainsPos(pos))                 // returns true if room containst he Unit Position pos
+                return r;
+        }
+        return null;
     }
 
     int adjacentRoomCount(Vector2 pos)
@@ -267,5 +305,34 @@ public class DungeonGenerator : MonoBehaviour {
             adjacencyCount = (r.ContainsPos(pos + mWest)) ? adjacencyCount + 1 : adjacencyCount;
         }
         return adjacencyCount;
+    }
+
+    Vector2[] GetRandomDirections()         // returns array of 4 cardinal directions in a random order
+    {
+        Vector2[] dirs = { mNorth, mSouth, mEast, mWest};
+        for(int i = 0; i < 3; i ++)
+        {   // randomly shuffle the dirs array
+            Vector2 temp = dirs[i];
+            int val = Random.Range(i, 3);
+            dirs[i] = dirs[val];
+            dirs[val] = temp;
+        }
+        return dirs;    
+    }
+
+    int[] GetRandomOrder(int n)
+    {
+        int[] N = new int[n];
+        for(int i = 0; i < n; i++)
+        { n = i; }
+
+        for(int r = 0; r < n; r++)
+        {
+            int temp = n;
+            int val = Random.Range(r, n-1);
+            N[r] = N[val];
+            N[val] = temp;
+        }
+        return N;
     }
 }
