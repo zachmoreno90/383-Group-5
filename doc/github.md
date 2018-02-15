@@ -29,7 +29,7 @@ Before you make any changes, always click "Fetch Origin", and if the button chan
 * If changes are already pushed
     1. Go the the GitHub Desktop History tab
     2. Right-Click the commit that you want to revert
-    3. Click "Revert this Commit
+    3. Click "Revert this Commit"
 
 ## More Info
 
